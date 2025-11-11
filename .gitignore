@@ -93,3 +93,6 @@ temp/
 # when installing from git repository for MCP server usage
 # However, api/ compiled files ARE ignored since Vercel compiles them automatically
 
+# lib/ directory is NOT ignored - it contains shared client code for Vercel API routes
+# lib/client.ts should be kept in sync with src/client.ts via sync-client script
+

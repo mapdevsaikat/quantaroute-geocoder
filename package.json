@@ -8,7 +8,8 @@
     "quantaroute-geocoder": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run sync-client",
+    "sync-client": "cp src/client.ts lib/client.ts",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "prepare": "npm run build"
