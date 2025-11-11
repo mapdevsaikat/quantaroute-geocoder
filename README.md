@@ -50,8 +50,8 @@ Add to your MCP configuration file (`~/.cursor/mcp.json` or similar):
 ### Environment Variables
 
 - `QUANTAROUTE_API_KEY` (required): Your QuantaRoute API key
-  - Get your API key from: https://api.quantaroute.com
-  - Free tier test key: `free_test_key_hash_12345` (for testing)
+  - Get your API key from: https://developers.quantaroute.com
+  - Free tier test key: `demo_free_key_123` (for testing)
 
 ## Available Tools
 
