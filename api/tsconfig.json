@@ -1,10 +1,15 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../dist/api",
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "strict": true,
     "noEmit": true
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../lib/**/*.ts"],
   "exclude": ["node_modules"]
 }
 

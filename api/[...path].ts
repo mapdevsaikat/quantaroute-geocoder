@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { QuantaRouteClient } from '../src/client.js';
+// Import client from lib directory (Vercel can access this)
+import { QuantaRouteClient } from '../lib/client.js';
 
 // CORS headers
 const corsHeaders = {
