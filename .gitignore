@@ -1,10 +1,95 @@
+# Dependencies
 node_modules/
-*.log
-.DS_Store
+# Note: package-lock.json should be committed for consistent dependencies
+# yarn.lock
+# pnpm-lock.yaml
+
+# Environment variables
 .env
 .env.local
+.env.*.local
+.env.production
+.env.development
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# TypeScript
 *.tsbuildinfo
+*.tsbuildinfo.*
+
+# Build artifacts (Vercel compiles TypeScript automatically)
+# Note: Keep api/ source files (.ts) but ignore compiled outputs
+# Ignore all compiled JavaScript files in api/ directory
+api/*.js
+api/*.js.map
+api/*.d.ts
+api/*.d.ts.map
+api/**/*.js
+api/**/*.js.map
+api/**/*.d.ts
+api/**/*.d.ts.map
+# But keep TypeScript source files
+!api/*.ts
+!api/**/*.ts
+
+# Vercel
+.vercel/
+.vercelignore
+
+# Development tools
+.specstory/
+.cursorindexingignore
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+
+# Misc
+*.pem
+*.key
+*.cert
+.npm
+.eslintcache
+.stylelintcache
 
 # Note: dist/ is NOT ignored because npx needs the compiled files
-# when installing from git repository
+# when installing from git repository for MCP server usage
+# However, api/ compiled files ARE ignored since Vercel compiles them automatically
 

@@ -181,6 +181,87 @@ Get live statistics about the Location Lookup service.
 ### `get_health`
 Check API health status.
 
+## REST API Wrapper
+
+This project includes a REST API wrapper that makes all MCP tools accessible via HTTP endpoints for mobile and web applications.
+
+### Features
+
+- ✅ **RESTful API**: All MCP tools exposed as HTTP endpoints
+- ✅ **Authentication**: API key via header or environment variable
+- ✅ **CORS Support**: Ready for web and mobile apps
+- ✅ **Vercel Ready**: Optimized for serverless deployment
+- ✅ **Error Handling**: Comprehensive error handling and validation
+
+### Quick Start
+
+1. **Deploy to Vercel**:
+   ```bash
+   vercel
+   ```
+
+2. **Set Environment Variable**:
+   ```bash
+   vercel env add QUANTAROUTE_API_KEY
+   ```
+
+3. **Configure Custom Domain** (Optional but recommended):
+   - Add `mcp-gc.quantaroute.com` as custom domain in Vercel
+   - Configure DNS CNAME record pointing to Vercel
+   - Wait for DNS propagation and SSL certificate
+
+4. **Use the API**:
+   ```bash
+   curl -X POST https://mcp-gc.quantaroute.com/api/geocode \
+     -H "Content-Type: application/json" \
+     -H "x-api-key: your-api-key" \
+     -d '{"address": "123 Main Street, New Delhi"}'
+   ```
+
+   **Base URL**: `https://mcp-gc.quantaroute.com/api`
+   
+   **Note**: `mcp-gc` stands for MCP Geocoding. This follows the naming convention:
+   - `mcp-gc.quantaroute.com` - Geocoding MCP Server (this project)
+   - `mcp-re.quantaroute.com` - Routing Engine MCP Server (future)
+
+### API Documentation
+
+For complete REST API documentation, see [API.md](./API.md).
+
+**Available Endpoints:**
+- `GET /api` - API information
+- `GET /api/health` - Health check
+- `GET /api/usage` - Usage statistics
+- `GET /api/location-statistics` - Location service statistics
+- `GET /api/autocomplete?q=query` - Address autocomplete
+- `GET /api/validate-digipin?digipin=XXX-XXX-XXXX` - Validate DigiPin
+- `POST /api/geocode` - Geocode an address
+- `POST /api/reverse-geocode` - Reverse geocode DigiPin
+- `POST /api/coordinates-to-digipin` - Convert coordinates to DigiPin
+- `POST /api/batch-geocode` - Batch geocode addresses
+- `POST /api/lookup-location-from-coordinates` - Lookup from coordinates
+- `POST /api/lookup-location-from-digipin` - Lookup from DigiPin
+- `POST /api/batch-location-lookup` - Batch location lookup
+- `POST /api/find-nearby-boundaries` - Find nearby boundaries
+
+### Authentication
+
+The API supports authentication in two ways:
+
+1. **Request Header** (Recommended):
+   ```
+   x-api-key: your-api-key-here
+   ```
+
+2. **Environment Variable** (Optional fallback):
+   ```
+   QUANTAROUTE_API_KEY=your-api-key-here
+   ```
+
+**Getting an API Key**: Users need a valid API key from [developers.quantaroute.com](https://developers.quantaroute.com). Each user's API key is validated by the backend API and usage is tracked separately.
+
+The request header takes precedence over the environment variable.
+
 ## Development
 
 ### Prerequisites
@@ -205,11 +286,16 @@ npm run dev
 ```
 mcp-server/
 ├── src/
-│   └── index.ts          # Main MCP server implementation
+│   ├── index.ts          # Main MCP server implementation
+│   └── client.ts         # QuantaRoute API client
+├── api/
+│   └── [...path].ts      # REST API wrapper (Vercel serverless function)
 ├── dist/                 # Compiled JavaScript (generated)
 ├── package.json
 ├── tsconfig.json
-└── README.md
+├── vercel.json           # Vercel configuration
+├── README.md
+└── API.md                # REST API documentation
 ```
 
 ## API Documentation
