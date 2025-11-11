@@ -68,7 +68,7 @@ Restart Cursor/Claude Desktop and try:
 
 ## 🔑 API Key
 
-Get your API key from: https://api.quantaroute.com
+Get your API key from: https://developers.quantaroute.com
 
 Free tier test key: `free_test_key_hash_12345`
 
