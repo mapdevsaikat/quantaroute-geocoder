@@ -1,6 +1,8 @@
 # QuantaRoute Geocoder MCP Server
 
-A Model Context Protocol (MCP) server that provides AI assistants with powerful geocoding, location lookup, and DigiPin processing capabilities using the QuantaRoute Geocoding API.
+A Model Context Protocol (MCP) server that provides AI assistants (Claude Desktop, Cursor, and more) with powerful geocoding, location lookup, and DigiPin processing capabilities using the QuantaRoute Geocoding API.
+
+**✅ Fully compatible with Claude Desktop and Cursor**
 
 ## Features
 
@@ -12,7 +14,7 @@ A Model Context Protocol (MCP) server that provides AI assistants with powerful 
 - **Batch geocode** multiple addresses (up to 100)
 - **Autocomplete** address suggestions
 
-### 🚀 Revolutionary Location Lookup
+### 🚀 Revolutionary Location Lookup with Nominatim + Pincode + Digipin
 - **Lookup administrative boundaries** from coordinates (pincode, state, division, locality)
 - **Lookup from DigiPin** codes
 - **Batch location lookup** for multiple locations
@@ -26,9 +28,16 @@ A Model Context Protocol (MCP) server that provides AI assistants with powerful 
 
 ## Installation
 
-### For Cursor/Claude Desktop
+This MCP server is compatible with **Claude Desktop** and **Cursor**. Follow the instructions below for your platform.
 
-Add to your MCP configuration file (`~/.cursor/mcp.json` or similar):
+### For Claude Desktop
+
+1. **Locate the Claude Desktop configuration file:**
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   - **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+2. **Edit the configuration file** and add:
 
 ```json
 {
@@ -46,6 +55,31 @@ Add to your MCP configuration file (`~/.cursor/mcp.json` or similar):
   }
 }
 ```
+
+3. **Save and restart Claude Desktop** to apply the changes.
+
+### For Cursor
+
+Add to your MCP configuration file (`~/.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "quantaroute-geocoder": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "git+https://github.com/mapdevsaikat/quantaroute-geocoder.git"
+      ],
+      "env": {
+        "QUANTAROUTE_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+Restart Cursor after making changes.
 
 ### Environment Variables
 
@@ -192,16 +226,26 @@ MIT License
 - **API Docs**: https://api.quantaroute.com/v1/digipin/docs
 - **Issues**: https://github.com/mapdevsaikat/quantaroute-geocoder/issues
 
+## Supported Platforms
+
+✅ **Claude Desktop** - Fully supported  
+✅ **Cursor** - Fully supported  
+✅ **Other MCP-compatible clients** - Should work with any MCP-compatible application
+
 ## Example Usage in AI Assistants
 
-Once configured, AI assistants can use tools like:
+Once configured, AI assistants (Claude, Cursor AI, etc.) can use tools like:
 
+### Example 1: Geocoding
 ```
 User: "What's the DigiPin for 123 Main Street, New Delhi?"
 
 Assistant: [Uses geocode tool]
 The DigiPin code for that address is ABC-DEF-1234, located at coordinates 28.6139°N, 77.2090°E.
+```
 
+### Example 2: Location Lookup
+```
 User: "What administrative boundaries are at coordinates 28.6139, 77.2090?"
 
 Assistant: [Uses lookup_location_from_coordinates tool]
@@ -212,4 +256,42 @@ That location is in:
 - Locality: Connaught Place
 - District: New Delhi
 ```
+
+### Example 3: Reverse Geocoding
+```
+User: "What's the address for DigiPin 2TF-3FT-J825?"
+
+Assistant: [Uses reverse_geocode tool]
+The DigiPin 2TF-3FT-J825 corresponds to:
+- Address: FE Block, Sector III, Bidhannagar, North 24 Parganas, West Bengal, 700106, India
+- Coordinates: 22.580587°N, 88.419001°E
+```
+
+## Troubleshooting
+
+### Claude Desktop Issues
+
+1. **Server not appearing in Claude Desktop:**
+   - Verify the config file path is correct for your OS
+   - Check that the JSON syntax is valid
+   - Restart Claude Desktop completely
+
+2. **"Command not found" errors:**
+   - Ensure Node.js 18+ is installed: `node --version`
+   - Verify `npx` is available: `which npx`
+
+3. **API authentication errors:**
+   - Check that `QUANTAROUTE_API_KEY` is set correctly in the config
+   - Verify the API key is valid at https://api.quantaroute.com
+
+### Cursor Issues
+
+1. **MCP server not loading:**
+   - Check `~/.cursor/mcp.json` exists and has valid JSON
+   - Restart Cursor completely
+   - Check Cursor's MCP logs for errors
+
+2. **Tools not available:**
+   - Verify the server is running (check Cursor's MCP status)
+   - Ensure API key is configured correctly
 
