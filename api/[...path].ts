@@ -73,6 +73,13 @@ function handleCors(req: VercelRequest, res: VercelResponse): boolean {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Debug: Log that function was called
+  console.log('=== FUNCTION CALLED ===');
+  console.log('Method:', req.method);
+  console.log('URL:', req.url);
+  console.log('Query:', JSON.stringify(req.query));
+  console.log('Headers:', JSON.stringify(req.headers));
+  
   // Handle CORS preflight
   if (handleCors(req, res)) {
     return;
