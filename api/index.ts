@@ -71,7 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'POST /api/lookup-location-from-coordinates': 'Get location details from coordinates',
       'POST /api/lookup-location-from-digipin': 'Get location details from DigiPin',
       'POST /api/batch-location-lookup': 'Batch location lookup',
-      'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries',
+      'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries (NOT YET IMPLEMENTED - Coming Soon)',
     },
   });
 }

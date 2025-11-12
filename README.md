@@ -18,7 +18,7 @@ A Model Context Protocol (MCP) server that provides AI assistants (Claude Deskto
 - **Lookup administrative boundaries** from coordinates (pincode, state, division, locality)
 - **Lookup from DigiPin** codes
 - **Batch location lookup** for multiple locations
-- **Find nearby boundaries** within a radius
+- **Find nearby boundaries** within a radius [COMING SOON...]
 - Access to **36,000+ postal boundaries** across India
 
 ### 📊 Utility Tools
@@ -157,7 +157,7 @@ Get address autocomplete suggestions.
 - `query` (required): Search query (minimum 3 characters)
 - `limit` (optional): Max suggestions (default: 5, max: 10)
 
-### `find_nearby_boundaries`
+### `find_nearby_boundaries [COMING SOON...]`
 Find nearby postal boundaries within a radius.
 
 **Parameters:**
@@ -195,34 +195,119 @@ This project includes a REST API wrapper that makes all MCP tools accessible via
 
 ### Quick Start
 
+The REST API is **already deployed** and ready to use at:
+
+**Base URL**: `https://mcp-gc.quantaroute.com/api`
+
+**Note**: `mcp-gc` stands for MCP Geocoding. This follows the naming convention:
+- `mcp-gc.quantaroute.com` - Geocoding MCP Server (this project)
+
+#### Using the REST API
+
+**1. Get API Information:**
+```bash
+curl https://mcp-gc.quantaroute.com/api
+```
+
+**2. Geocode an Address:**
+```bash
+curl -X POST https://mcp-gc.quantaroute.com/api/geocode \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: your-api-key-here" \
+  -d '{
+    "address": "123 Main Street, New Delhi",
+    "city": "New Delhi",
+    "state": "Delhi",
+    "pincode": "110001"
+  }'
+```
+
+**3. Health Check:**
+```bash
+curl -X GET https://mcp-gc.quantaroute.com/api/health \
+  -H "x-api-key: your-api-key-here"
+```
+
+**4. Find Nearby Boundaries:[NOT RELEASED, COMING SOON...]**
+```bash
+curl -X POST https://mcp-gc.quantaroute.com/api/find-nearby-boundaries \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: your-api-key-here" \
+  -d '{
+    "latitude": 28.6139,
+    "longitude": 77.2090,
+    "radius_km": 5.0,
+    "limit": 10
+  }'
+```
+
+This endpoint finds nearby postal boundaries within a specified radius. Useful for:
+- Finding all pincodes within X km of a location
+- Discovering nearby administrative boundaries
+- Location-based search and discovery
+
+#### JavaScript/TypeScript Example
+
+```javascript
+// Geocode an address
+const response = await fetch('https://mcp-gc.quantaroute.com/api/geocode', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': 'your-api-key-here'
+  },
+  body: JSON.stringify({
+    address: '123 Main Street, New Delhi',
+    city: 'New Delhi',
+    state: 'Delhi'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+#### Python Example
+
+```python
+import requests
+
+# Geocode an address
+response = requests.post(
+    'https://mcp-gc.quantaroute.com/api/geocode',
+    headers={
+        'Content-Type': 'application/json',
+        'x-api-key': 'your-api-key-here'
+    },
+    json={
+        'address': '123 Main Street, New Delhi',
+        'city': 'New Delhi',
+        'state': 'Delhi'
+    }
+)
+
+data = response.json()
+print(data)
+```
+
+#### Deploying Your Own Instance
+
+If you want to deploy your own instance:
+
 1. **Deploy to Vercel**:
    ```bash
    vercel
    ```
 
-2. **Set Environment Variable**:
+2. **Set Environment Variable** (optional, for testing):
    ```bash
    vercel env add QUANTAROUTE_API_KEY
    ```
 
-3. **Configure Custom Domain** (Optional but recommended):
-   - Add `mcp-gc.quantaroute.com` as custom domain in Vercel
+3. **Configure Custom Domain** (optional):
+   - Add your custom domain in Vercel
    - Configure DNS CNAME record pointing to Vercel
    - Wait for DNS propagation and SSL certificate
-
-4. **Use the API**:
-   ```bash
-   curl -X POST https://mcp-gc.quantaroute.com/api/geocode \
-     -H "Content-Type: application/json" \
-     -H "x-api-key: your-api-key" \
-     -d '{"address": "123 Main Street, New Delhi"}'
-   ```
-
-   **Base URL**: `https://mcp-gc.quantaroute.com/api`
-   
-   **Note**: `mcp-gc` stands for MCP Geocoding. This follows the naming convention:
-   - `mcp-gc.quantaroute.com` - Geocoding MCP Server (this project)
-   - `mcp-re.quantaroute.com` - Routing Engine MCP Server (future)
 
 ### API Documentation
 
@@ -242,25 +327,34 @@ For complete REST API documentation, see [API.md](./API.md).
 - `POST /api/lookup-location-from-coordinates` - Lookup from coordinates
 - `POST /api/lookup-location-from-digipin` - Lookup from DigiPin
 - `POST /api/batch-location-lookup` - Batch location lookup
-- `POST /api/find-nearby-boundaries` - Find nearby boundaries
+- `POST /api/find-nearby-boundaries` - Find nearby boundaries [COMING SOON...]
 
 ### Authentication
 
 The API supports authentication in two ways:
 
-1. **Request Header** (Recommended):
+1. **Request Header** (Recommended for production):
    ```
    x-api-key: your-api-key-here
    ```
+   - Users should get their own API key from [developers.quantaroute.com](https://developers.quantaroute.com)
+   - Send the API key in the `x-api-key` header with each request
+   - Each user's API key is validated by the backend API and usage is tracked separately
 
-2. **Environment Variable** (Optional fallback):
+2. **Environment Variable** (Optional fallback for testing):
    ```
    QUANTAROUTE_API_KEY=your-api-key-here
    ```
+   - Only used if no `x-api-key` header is provided
+   - Useful for testing and development
+   - Not recommended for production use
 
-**Getting an API Key**: Users need a valid API key from [developers.quantaroute.com](https://developers.quantaroute.com). Each user's API key is validated by the backend API and usage is tracked separately.
+**Priority**: The request header takes precedence over the environment variable.
 
-The request header takes precedence over the environment variable.
+**Getting an API Key**: 
+- Visit [developers.quantaroute.com](https://developers.quantaroute.com)
+- Sign up and get your API key
+- Use it in the `x-api-key` header for all API requests
 
 ## Development
 
