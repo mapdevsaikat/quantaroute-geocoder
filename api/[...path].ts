@@ -83,6 +83,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const endpoint = path[0] || '';
 
   try {
+    // Root endpoint - show API documentation (no API key required)
+    if (endpoint === '' && method === 'GET') {
+      return sendJson(res, 200, {
+        success: true,
+        message: 'QuantaRoute Geocoder REST API',
+        version: '1.0.0',
+        documentation: 'https://github.com/mapdevsaikat/quantaroute-geocoder',
+        authentication: {
+          method: 'API Key',
+          header: 'x-api-key',
+          env: 'QUANTAROUTE_API_KEY',
+          note: 'API key can be provided via x-api-key header or QUANTAROUTE_API_KEY environment variable. Get your API key from https://developers.quantaroute.com',
+          getApiKey: 'https://developers.quantaroute.com',
+        },
+        endpoints: {
+          'GET /api': 'Get API information (this endpoint)',
+          'GET /api/health': 'Health check',
+          'GET /api/usage': 'Get API usage statistics',
+          'GET /api/location-statistics': 'Get location lookup statistics',
+          'GET /api/autocomplete?q=query&limit=5': 'Get address autocomplete suggestions',
+          'GET /api/validate-digipin?digipin=XXX-XXX-XXXX': 'Validate DigiPin format',
+          'POST /api/geocode': 'Geocode an address',
+          'POST /api/reverse-geocode': 'Reverse geocode a DigiPin',
+          'POST /api/coordinates-to-digipin': 'Convert coordinates to DigiPin',
+          'POST /api/validate-digipin': 'Validate DigiPin format',
+          'POST /api/batch-geocode': 'Geocode multiple addresses',
+          'POST /api/lookup-location-from-coordinates': 'Get location details from coordinates',
+          'POST /api/lookup-location-from-digipin': 'Get location details from DigiPin',
+          'POST /api/batch-location-lookup': 'Batch location lookup',
+          'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries',
+        },
+      });
+    }
+
     // Create client instance with API key from request or environment
     const client = createClient(req);
 
@@ -311,68 +345,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return sendJson(res, 200, { success: true, data: result });
     }
 
-    // Root endpoint - show API documentation
-    if (endpoint === '' && method === 'GET') {
-      return sendJson(res, 200, {
-        success: true,
-        message: 'QuantaRoute Geocoder REST API',
-        version: '1.0.0',
-        documentation: 'https://github.com/mapdevsaikat/quantaroute-geocoder',
-        authentication: {
-          method: 'API Key',
-          header: 'x-api-key',
-          env: 'QUANTAROUTE_API_KEY',
-          note: 'API key can be provided via x-api-key header or QUANTAROUTE_API_KEY environment variable. Get your API key from https://developers.quantaroute.com',
-          getApiKey: 'https://developers.quantaroute.com',
-        },
-        endpoints: {
-          'GET /api': 'Get API information (this endpoint)',
-          'GET /api/health': 'Check API health status',
-          'GET /api/usage': 'Get API usage statistics',
-          'GET /api/location-statistics': 'Get location service statistics',
-          'GET /api/autocomplete?q=query&limit=5': 'Get address autocomplete suggestions (min 3 chars)',
-          'GET /api/validate-digipin?digipin=XXX-XXX-XXXX': 'Validate a DigiPin code',
-          'POST /api/geocode': 'Geocode an address to get DigiPin and coordinates',
-          'POST /api/reverse-geocode': 'Reverse geocode a DigiPin to get address',
-          'POST /api/coordinates-to-digipin': 'Convert coordinates to DigiPin',
-          'POST /api/validate-digipin': 'Validate a DigiPin code (alternative to GET)',
-          'POST /api/batch-geocode': 'Geocode multiple addresses (up to 100)',
-          'POST /api/lookup-location-from-coordinates': 'Get administrative boundaries from coordinates',
-          'POST /api/lookup-location-from-digipin': 'Get administrative boundaries from DigiPin',
-          'POST /api/batch-location-lookup': 'Batch lookup for multiple locations (up to 100)',
-          'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries within a radius',
-        },
-        examples: {
-          geocode: {
-            method: 'POST',
-            url: '/api/geocode',
-            headers: { 'Content-Type': 'application/json', 'x-api-key': 'your-api-key' },
-            body: {
-              address: '123 Main Street, New Delhi',
-              city: 'New Delhi',
-              state: 'Delhi',
-              pincode: '110001',
-            },
-          },
-          reverseGeocode: {
-            method: 'POST',
-            url: '/api/reverse-geocode',
-            headers: { 'Content-Type': 'application/json', 'x-api-key': 'your-api-key' },
-            body: { digipin: 'ABC-DEF-1234' },
-          },
-          autocomplete: {
-            method: 'GET',
-            url: '/api/autocomplete?q=New Delhi&limit=5',
-            headers: { 'x-api-key': 'your-api-key' },
-          },
-        },
-      });
-    }
-
-    // 404 for unknown endpoints
+    // Unknown endpoint
     return sendJson(res, 404, {
       success: false,
-      error: 'Endpoint not found',
+      error: `Endpoint '${endpoint}' not found`,
+      message: 'See GET /api for available endpoints',
       endpoint: endpoint || '(root)',
       method: method,
       availableEndpoints: [
