@@ -78,8 +78,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const { method, query, body } = req;
-  const path = (query.path as string[]) || [];
+  const { method, query, body, url } = req;
+  
+  // Debug logging (remove in production if needed)
+  console.log('Request URL:', url);
+  console.log('Query params:', JSON.stringify(query));
+  
+  // Handle both array and string path formats
+  let path: string[] = [];
+  if (Array.isArray(query.path)) {
+    path = query.path;
+  } else if (typeof query.path === 'string') {
+    path = query.path ? query.path.split('/').filter(Boolean) : [];
+  }
+  
+  // If path is empty, try to extract from URL
+  if (path.length === 0 && url) {
+    const urlPath = new URL(url, 'http://localhost').pathname;
+    const parts = urlPath.replace('/api/', '').split('/').filter(Boolean);
+    path = parts;
+  }
+  
   const endpoint = path[0] || '';
 
   try {

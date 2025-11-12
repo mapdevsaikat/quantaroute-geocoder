@@ -11,10 +11,6 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/[...path]"
-    },
-    {
-      "src": "/api",
-      "dest": "/api/[...path]"
     }
   ]
 }
