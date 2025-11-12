@@ -99,18 +99,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     path = query.path ? query.path.split('/').filter(Boolean) : [];
   }
   
-  // If path is empty, try to extract from URL
-  if (path.length === 0 && url) {
-    const urlPath = new URL(url, 'http://localhost').pathname;
-    const parts = urlPath.replace('/api/', '').split('/').filter(Boolean);
-    path = parts;
+  // If path is empty or undefined, try to extract from URL
+  if ((!path || path.length === 0) && url) {
+    try {
+      const urlPath = new URL(url, 'http://localhost').pathname;
+      // Remove /api prefix and split
+      const cleanPath = urlPath.startsWith('/api') ? urlPath.substring(4) : urlPath;
+      const parts = cleanPath.split('/').filter(Boolean);
+      path = parts;
+    } catch (e) {
+      // If URL parsing fails, treat as root
+      path = [];
+    }
   }
   
-  const endpoint = path[0] || '';
+  const endpoint = path && path.length > 0 ? path[0] : '';
+  
+  // Debug: Log the parsed endpoint
+  console.log('Parsed endpoint:', endpoint);
+  console.log('Path array:', JSON.stringify(path));
 
   try {
     // Root endpoint - show API documentation (no API key required)
-    if (endpoint === '' && method === 'GET') {
+    // Check if endpoint is empty OR if URL is exactly /api
+    const isRootEndpoint = (endpoint === '' || endpoint === undefined) && method === 'GET';
+    if (isRootEndpoint) {
       return sendJson(res, 200, {
         success: true,
         message: 'QuantaRoute Geocoder REST API',
