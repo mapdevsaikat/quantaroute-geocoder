@@ -272,7 +272,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'find_nearby_boundaries',
-        description: 'Find nearby postal boundaries within a specified radius (experimental feature).',
+        description: 'Find nearby postal boundaries within a specified radius (NOT YET IMPLEMENTED - Coming Soon). The backend endpoint /v1/location/nearby needs to be implemented first.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -499,6 +499,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'find_nearby_boundaries': {
+        // TODO: This endpoint is not yet implemented in the backend API
+        // The backend endpoint /v1/location/nearby does not exist
+        throw new McpError(
+          ErrorCode.InternalError,
+          'The find_nearby_boundaries feature is not yet implemented in the backend API. The endpoint /v1/location/nearby needs to be implemented first. This feature is coming soon.'
+        );
+        
+        /* Original implementation - Commented out until backend endpoint is available
         const params = args as unknown as NearbyBoundariesParams;
         if (typeof params.latitude !== 'number' || typeof params.longitude !== 'number') {
           throw new McpError(ErrorCode.InvalidParams, 'Latitude and longitude must be numbers');
@@ -517,6 +525,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             },
           ],
         };
+        */
       }
 
       case 'get_usage': {

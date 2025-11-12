@@ -151,7 +151,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           'POST /api/lookup-location-from-coordinates': 'Get location details from coordinates',
           'POST /api/lookup-location-from-digipin': 'Get location details from DigiPin',
           'POST /api/batch-location-lookup': 'Batch location lookup',
-          'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries',
+          'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries (NOT YET IMPLEMENTED - Coming Soon)',
         },
       });
     }
@@ -344,7 +344,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return sendJson(res, 200, { success: true, data: result });
     }
 
-    // Find nearby boundaries
+    // Find nearby boundaries - NOT YET IMPLEMENTED IN BACKEND
+    // TODO: Implement /v1/location/nearby endpoint in backend API
+    // The backend endpoint /v1/location/nearby does not exist yet
+    if (endpoint === 'find-nearby-boundaries' && method === 'POST') {
+      return sendJson(res, 501, {
+        success: false,
+        error: 'Not Implemented',
+        message: 'The find-nearby-boundaries endpoint is not yet implemented in the backend API. This feature is coming soon.',
+        endpoint: 'find-nearby-boundaries',
+        status: 'experimental',
+        note: 'This feature is marked as experimental and will be available in a future release. The backend endpoint /v1/location/nearby needs to be implemented first.'
+      });
+    }
+    
+    /* Original implementation - Commented out until backend endpoint /v1/location/nearby is implemented
     if (endpoint === 'find-nearby-boundaries' && method === 'POST') {
       if (typeof body?.latitude !== 'number' || typeof body?.longitude !== 'number') {
         return sendJson(res, 400, {
@@ -383,6 +397,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const result = await client.findNearbyBoundaries(body.latitude, body.longitude, radius_km, limit);
       return sendJson(res, 200, { success: true, data: result });
     }
+    */
 
     // Unknown endpoint
     return sendJson(res, 404, {
@@ -406,7 +421,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'POST /api/lookup-location-from-coordinates',
         'POST /api/lookup-location-from-digipin',
         'POST /api/batch-location-lookup',
-        'POST /api/find-nearby-boundaries',
+        'POST /api/find-nearby-boundaries (NOT YET IMPLEMENTED)',
       ],
     });
   } catch (error: any) {
