@@ -13,7 +13,7 @@
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "prepare": "npm run build",
-    "vercel-build": "echo 'No build needed for Vercel - serverless functions only'"
+    "vercel-build": "echo 'No build needed - Vercel compiles TypeScript automatically'"
   },
   "keywords": [
     "mcp",
