@@ -1,6 +1,7 @@
 {
   "version": 2,
   "buildCommand": "echo 'No build needed - serverless functions only'",
+  "installCommand": "npm install --ignore-scripts",
   "outputDirectory": "public",
   "framework": null,
   "functions": {
