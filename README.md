@@ -102,10 +102,10 @@ Geocode an address to get DigiPin code and coordinates.
 **Example:**
 ```json
 {
-  "address": "123 Main Street, New Delhi",
-  "city": "New Delhi",
-  "state": "Delhi",
-  "pincode": "110001"
+  "address": "Rohra Address, New Town",
+  "city": "New Town",
+  "state": "West Bengal",
+  "pincode": "700163"
 }
 ```
 
@@ -215,10 +215,10 @@ curl -X POST https://mcp-gc.quantaroute.com/api/geocode \
   -H "Content-Type: application/json" \
   -H "x-api-key: your-api-key-here" \
   -d '{
-    "address": "123 Main Street, New Delhi",
-    "city": "New Delhi",
-    "state": "Delhi",
-    "pincode": "110001"
+    "address": "Rohra Address, New Town",
+    "city": "New Town",
+    "state": "West Bengal",
+    "pincode": "700163"
   }'
 ```
 
@@ -257,9 +257,9 @@ const response = await fetch('https://mcp-gc.quantaroute.com/api/geocode', {
     'x-api-key': 'your-api-key-here'
   },
   body: JSON.stringify({
-    address: '123 Main Street, New Delhi',
-    city: 'New Delhi',
-    state: 'Delhi'
+    address: 'Rohra Address, Action Area I',
+    city: 'New Town',
+    state: 'West Bengal'
   })
 });
 
@@ -280,9 +280,9 @@ response = requests.post(
         'x-api-key': 'your-api-key-here'
     },
     json={
-        'address': '123 Main Street, New Delhi',
-        'city': 'New Delhi',
-        'state': 'Delhi'
+        'address': 'Rohra Address, Action Area I, Ghuni',
+        'city': 'New Town',
+        'state': 'West Bengal'
     }
 )
 
@@ -418,10 +418,11 @@ Once configured, AI assistants (Claude, Cursor AI, etc.) can use tools like:
 
 ### Example 1: Geocoding
 ```
-User: "What's the DigiPin for 123 Main Street, New Delhi?"
+User: "What's the DigiPin for Biswa Bangla Gate, New Town?"
 
 Assistant: [Uses geocode tool]
-The DigiPin code for that address is ABC-DEF-1234, located at coordinates 28.6139°N, 77.2090°E.
+The DigiPin code for that address is 2TF-39M-JT5F, located at coordinates 22.5788545, 88.4716628.
+Full Address: Biswa Bangla Gate, New Town, Biswa Bangla Sarani, Action Area I, New Town, Bidhannagar, North 24 Parganas, West Bengal, 700156, India
 ```
 
 ### Example 2: Location Lookup

@@ -48,7 +48,7 @@ Add to `~/.cursor/mcp.json`:
 ### 3. Test It
 
 Restart Cursor/Claude Desktop and try:
-- "What's the DigiPin for 123 Main Street, New Delhi?"
+- "What's the DigiPin for Biswa Bangla Gate, New Town?"
 - "Lookup administrative boundaries for coordinates 28.6139, 77.2090"
 
 ## 📋 Available Tools
@@ -95,10 +95,10 @@ curl -X POST https://mcp-gc.quantaroute.com/api/geocode \
   -H "Content-Type: application/json" \
   -H "x-api-key: your-api-key-here" \
   -d '{
-    "address": "123 Main Street, New Delhi",
-    "city": "New Delhi",
-    "state": "Delhi",
-    "pincode": "110001"
+    "address": "Biswa Bangla Gate, New Town",
+    "city": "New Town",
+    "state": "West Bengal",
+    "pincode": "700156"
   }'
 ```
 
@@ -170,9 +170,9 @@ const response = await fetch('https://mcp-gc.quantaroute.com/api/geocode', {
     'x-api-key': 'your-api-key-here'
   },
   body: JSON.stringify({
-    address: '123 Main Street, New Delhi',
-    city: 'New Delhi',
-    state: 'Delhi'
+    address: 'Rohra Address, Action Area I',
+    city: 'New Town',
+    state: 'West Bengal'
   })
 });
 
@@ -193,9 +193,9 @@ response = requests.post(
         'x-api-key': 'your-api-key-here'
     },
     json={
-        'address': '123 Main Street, New Delhi',
-        'city': 'New Delhi',
-        'state': 'Delhi'
+        'address': 'Rohra Address, Action Area I, Ghuni',
+        'city': 'New Town',
+        'state': 'West Bengal'
     }
 )
 
