@@ -1,18 +1,20 @@
 {
   "version": 2,
-  "buildCommand": "echo 'No build needed - serverless functions only'",
   "installCommand": "npm install --ignore-scripts",
-  "outputDirectory": "public",
-  "framework": null,
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@3.0.0"
-    }
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/[...path]"
+      "src": "api/[...path].ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/[...path]"
+    },
+    {
+      "src": "/api",
+      "dest": "/api/[...path]"
     }
   ]
 }
