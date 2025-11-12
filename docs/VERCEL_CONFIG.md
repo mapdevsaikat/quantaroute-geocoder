@@ -33,9 +33,9 @@ The `vercel.json` configures this as a serverless function project:
 
 ## Important Notes
 
-1. **No Static Site**: This is NOT a static site. There is NO `public` directory.
-2. **No Build Output**: Vercel compiles TypeScript automatically. The `dist/` directory is only for MCP server distribution via npx.
-3. **Serverless Functions**: All API endpoints are serverless functions in the `api/` directory.
+1. **Serverless Functions**: All API endpoints are serverless functions in the `api/` directory.
+2. **Public Directory**: The `public/` directory exists only to satisfy Vercel's requirement for an output directory. It contains a simple `index.html` file.
+3. **No Build Output**: Vercel compiles TypeScript automatically. The `dist/` directory is only for MCP server distribution via npx.
 4. **TypeScript Compilation**: Vercel automatically compiles TypeScript files in `api/` directory.
 
 ## Deployment
@@ -46,9 +46,19 @@ The `vercel.json` configures this as a serverless function project:
 
 ## Troubleshooting
 
-If you see the error: "No Output Directory named 'public' found"
+### Error: "No Output Directory named 'public' found"
 
-**Solution**: Make sure `vercel.json` is configured correctly with `functions` configuration. Vercel should NOT look for a `public` directory because this is a serverless function project, not a static site.
+**Solution**: 
+- The `public/` directory has been created with a simple `index.html` file
+- The `vercel.json` is configured with `"outputDirectory": "public"`
+- This satisfies Vercel's requirement while still using serverless functions
+
+### If Deployment Still Fails
+
+1. **Verify public directory exists**: `ls -la public/`
+2. **Check vercel.json**: Ensure `outputDirectory: "public"` is set
+3. **Verify files are committed**: `git status public/`
+4. **Check Vercel Dashboard**: Verify project settings match vercel.json
 
 ## Build Script
 

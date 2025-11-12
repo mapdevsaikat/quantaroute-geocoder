@@ -12,7 +12,8 @@
     "sync-client": "cp src/client.ts lib/client.ts",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "vercel-build": "echo 'No build needed for Vercel - serverless functions only'"
   },
   "keywords": [
     "mcp",

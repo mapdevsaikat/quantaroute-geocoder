@@ -96,3 +96,6 @@ temp/
 # lib/ directory is NOT ignored - it contains shared client code for Vercel API routes
 # lib/client.ts should be kept in sync with src/client.ts via sync-client script
 
+# public/ directory - empty folder for Vercel (serverless functions don't need it, but Vercel expects it)
+# public/.gitkeep is committed to keep the directory in git
+
