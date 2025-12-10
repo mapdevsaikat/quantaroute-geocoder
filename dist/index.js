@@ -212,7 +212,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             {
                 name: 'find_nearby_boundaries',
-                description: 'Find nearby postal boundaries within a specified radius (experimental feature).',
+                description: 'Find nearby postal boundaries within a specified radius (NOT YET IMPLEMENTED - Coming Soon). The backend endpoint /v1/location/nearby needs to be implemented first.',
                 inputSchema: {
                     type: 'object',
                     properties: {
@@ -427,19 +427,29 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 };
             }
             case 'find_nearby_boundaries': {
-                const params = args;
+                // TODO: This endpoint is not yet implemented in the backend API
+                // The backend endpoint /v1/location/nearby does not exist
+                throw new McpError(ErrorCode.InternalError, 'The find_nearby_boundaries feature is not yet implemented in the backend API. The endpoint /v1/location/nearby needs to be implemented first. This feature is coming soon.');
+                /* Original implementation - Commented out until backend endpoint is available
+                const params = args as unknown as NearbyBoundariesParams;
                 if (typeof params.latitude !== 'number' || typeof params.longitude !== 'number') {
-                    throw new McpError(ErrorCode.InvalidParams, 'Latitude and longitude must be numbers');
+                  throw new McpError(ErrorCode.InvalidParams, 'Latitude and longitude must be numbers');
                 }
-                const result = await client.findNearbyBoundaries(params.latitude, params.longitude, params.radius_km, params.limit);
+                const result = await client.findNearbyBoundaries(
+                  params.latitude,
+                  params.longitude,
+                  params.radius_km,
+                  params.limit
+                );
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(result, null, 2),
-                        },
-                    ],
+                  content: [
+                    {
+                      type: 'text',
+                      text: JSON.stringify(result, null, 2),
+                    },
+                  ],
                 };
+                */
             }
             case 'get_usage': {
                 const result = await client.getUsage();
