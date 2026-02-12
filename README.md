@@ -1,6 +1,9 @@
-# QuantaRoute Geocoder MCP Server
+# QuantaRoute MCP Server
 
 A Model Context Protocol (MCP) server that provides AI assistants (Claude Desktop, Cursor, and more) with powerful geocoding, location lookup, and DigiPin processing capabilities using the QuantaRoute Geocoding API.
+
+**Package**: `@quantaroute/mcp-server` (MCP Server for AI Agents)  
+**SDK**: [`quantaroute-geocoding`](https://www.npmjs.com/package/quantaroute-geocoding) (Node.js/TypeScript SDK)
 
 **✅ Fully compatible with Claude Desktop and Cursor**
 
@@ -42,11 +45,11 @@ This MCP server is compatible with **Claude Desktop** and **Cursor**. Follow the
 ```json
 {
   "mcpServers": {
-    "quantaroute-geocoder": {
+    "quantaroute": {
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/mapdevsaikat/quantaroute-geocoder.git"
+        "@quantaroute/mcp-server"
       ],
       "env": {
         "QUANTAROUTE_API_KEY": "your-api-key-here"
@@ -65,11 +68,11 @@ Add to your MCP configuration file (`~/.cursor/mcp.json`):
 ```json
 {
   "mcpServers": {
-    "quantaroute-geocoder": {
+    "quantaroute": {
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/mapdevsaikat/quantaroute-geocoder.git"
+        "@quantaroute/mcp-server"
       ],
       "env": {
         "QUANTAROUTE_API_KEY": "your-api-key-here"

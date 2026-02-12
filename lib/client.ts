@@ -40,7 +40,7 @@ export class QuantaRouteClient {
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'quantaroute-geocoder-api/1.0.0',
+        'User-Agent': '@quantaroute/mcp-server/1.0.0',
       },
     });
 
