@@ -31,11 +31,11 @@ Add to `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "quantaroute-geocoder": {
+    "quantaroute": {
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/mapdevsaikat/quantaroute-geocoder.git"
+        "@quantaroute/mcp-server"
       ],
       "env": {
         "QUANTAROUTE_API_KEY": "your-api-key-here"

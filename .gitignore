@@ -7,6 +7,10 @@ node_modules/
 # Environment variables
 .env
 .env.local
+
+# MCP registry tokens (never commit)
+.mcpregistry_github_token
+.mcpregistry_registry_token
 .env.*.local
 .env.production
 .env.development

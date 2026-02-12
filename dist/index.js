@@ -11,7 +11,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema, ErrorCode, McpError, } f
 import { QuantaRouteClient } from './client.js';
 // Initialize MCP server
 const server = new Server({
-    name: 'quantaroute-geocoder',
+    name: '@quantaroute/mcp-server',
     version: '1.0.0',
 }, {
     capabilities: {
@@ -499,7 +499,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error('QuantaRoute Geocoder MCP server running on stdio');
+    console.error('QuantaRoute MCP Server running on stdio');
 }
 main().catch((error) => {
     console.error('Fatal error in main():', error);
