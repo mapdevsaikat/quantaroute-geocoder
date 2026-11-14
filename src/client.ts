@@ -52,7 +52,7 @@ export class QuantaRouteClient {
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': '@quantaroute/mcp-server/1.1.0',
+        'User-Agent': '@quantaroute/mcp-server/1.2.0',
       },
     });
 

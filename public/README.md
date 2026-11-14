@@ -1,6 +1,6 @@
 # QuantaRoute Geocoder REST
 
-Vercel output directory. APIs live under `/api`. **v1.1.0**
+Vercel output directory. APIs live under `/api`. **v1.2.0**
 
 - Geocode: optional `latitude` + `longitude` for local bias and category nearby (`hospital near me`).
 - Autocomplete: optional `lat` + `lng` (same).

@@ -47,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   return sendJson(res, 200, {
     success: true,
     message: 'QuantaRoute Geocoder REST API',
-    version: '1.1.0',
+    version: '1.2.0',
     documentation: 'https://github.com/mapdevsaikat/quantaroute-geocoder',
     authentication: {
       method: 'API Key',

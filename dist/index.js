@@ -12,7 +12,7 @@ import { ApiError, QuantaRouteClient, ValidationError } from './client.js';
 // Initialize MCP server
 const server = new Server({
     name: '@quantaroute/mcp-server',
-    version: '1.1.0',
+    version: '1.2.0',
 }, {
     capabilities: {
         tools: {},
