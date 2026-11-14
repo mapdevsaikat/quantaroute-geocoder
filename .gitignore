@@ -92,6 +92,8 @@ temp/
 .npm
 .eslintcache
 .stylelintcache
+graphify-out/
+graphify-out/**/*
 
 # Note: dist/ is NOT ignored because npx needs the compiled files
 # when installing from git repository for MCP server usage
