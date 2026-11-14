@@ -2,17 +2,19 @@
 
 MCP server and REST wrapper for the [QuantaRoute](https://quantaroute.com) geocoding API (India). Geocode addresses, reverse-geocode DigiPin, and look up administrative boundaries.
 
+## First step: Get an `API key` at [developers.quantaroute.com](https://developers.quantaroute.com).
+
 | | |
 |---|---|
 | npm | [`@quantaroute/mcp-server`](https://www.npmjs.com/package/@quantaroute/mcp-server) **1.2.0** |
 | MCP Registry | [`io.github.mapdevsaikat/quantaroute-geocoder`](https://registry.modelcontextprotocol.io/?q=quantaroute) |
-| App SDK | [`quantaroute-geocoding`](https://www.npmjs.com/package/quantaroute-geocoding) (separate package) |
 
-## Get an API key at [developers.quantaroute.com](https://developers.quantaroute.com).
 
 ## MCP (Claude Desktop, Cursor)
 
-Add to Claude Desktop (`claude_desktop_config.json`) or Cursor (`~/.cursor/mcp.json`), then restart:
+Add to Claude Desktop (`claude_desktop_config.json`) or Cursor (`~/.cursor/mcp.json`), then restart. Requires Node.js 18+ and `npx`.
+
+**Local process** (MCP stdio):
 
 ```json
 {
@@ -27,8 +29,6 @@ Add to Claude Desktop (`claude_desktop_config.json`) or Cursor (`~/.cursor/mcp.j
   }
 }
 ```
-
-Requires Node.js 18+ and `npx`.
 
 ### Tools
 
@@ -49,16 +49,7 @@ Requires Node.js 18+ and `npx`.
 
 ## REST
 
-Hosted at `https://mcp-gc.quantaroute.com/api`. Send `x-api-key`, or fall back to `QUANTAROUTE_API_KEY` on the server.
-
-```bash
-curl -s https://mcp-gc.quantaroute.com/api/geocode \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: your-api-key" \
-  -d '{"address":"Biswa Bangla Gate, New Town","latitude":22.58,"longitude":88.47}'
-```
-
-Paths match the tools (`POST /api/geocode`, `GET /api/autocomplete?q=…&lat=&lng=`, `POST /api/reverse-geocode`, …). Missing key → **401**. Full list: [docs/API.md](docs/API.md).
+Same host: `https://mcp-gc.quantaroute.com/api`. Header `x-api-key`, or `QUANTAROUTE_API_KEY` on the server. Paths match the tools (`POST /api/geocode`, `GET /api/autocomplete?q=…&lat=&lng=`, …). Missing key → **401**. Full list: [docs/API.md](docs/API.md).
 
 ## Develop
 
