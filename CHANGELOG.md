@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Missing API key is HTTP 401.
 - Postal `find-nearby-boundaries` stays unavailable; use geocode or autocomplete with a point instead.
+- Releases are published from a laptop (npm + MCP Registry). GitHub Actions only builds.
 
 ## [1.0.0] - 2026-02-12
 

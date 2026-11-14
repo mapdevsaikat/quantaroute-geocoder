@@ -14,7 +14,9 @@
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "prepare": "npm run build",
-    "vercel-build": "echo 'No build needed - Vercel compiles TypeScript automatically'"
+    "vercel-build": "echo 'No build needed - Vercel compiles TypeScript automatically'",
+    "publish:npm": "npm publish --access public",
+    "publish:mcp": "mcp-publisher publish"
   },
   "keywords": [
     "mcp",
