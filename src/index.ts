@@ -15,7 +15,7 @@ import {
   ErrorCode,
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
-import { QuantaRouteClient } from './client.js';
+import { ApiError, QuantaRouteClient, ValidationError } from './client.js';
 
 interface CoordinatesParams {
   latitude: number;
@@ -45,11 +45,7 @@ interface BatchGeocodeParams {
 }
 
 interface BatchLocationParams {
-  locations: Array<{
-    latitude?: number;
-    longitude?: number;
-    digipin?: string;
-  }>;
+  locations: unknown[];
 }
 
 interface LocationLookupParams {
@@ -68,7 +64,7 @@ interface NearbyBoundariesParams {
 const server = new Server(
   {
     name: '@quantaroute/mcp-server',
-    version: '1.0.0',
+    version: '1.1.0',
   },
   {
     capabilities: {
@@ -86,7 +82,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'geocode',
-        description: 'Geocode an address to get DigiPin code and coordinates. Returns location information including latitude, longitude, and DigiPin.',
+        description: 'Geocode an address to DigiPin and coordinates. Pass latitude+longitude together to bias local results and enable category nearby queries such as "hospital near me". Without a point, those queries return NEARBY_LOCATION_REQUIRED.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -109,6 +105,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             country: {
               type: 'string',
               description: 'Country name (optional, defaults to India)',
+            },
+            latitude: {
+              type: 'number',
+              description: 'User or map-centre latitude. Must be sent with longitude. Enables location bias and category nearby.',
+            },
+            longitude: {
+              type: 'number',
+              description: 'User or map-centre longitude. Must be sent with latitude.',
             },
           },
           required: ['address'],
@@ -188,18 +192,26 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'autocomplete',
-        description: 'Get autocomplete suggestions for addresses (minimum 3 characters).',
+        description: 'Address autocomplete (minimum 3 characters). Pass latitude+longitude to bias results and support "near me" / "nearby" category queries (hospital, school, park).',
         inputSchema: {
           type: 'object',
           properties: {
             query: {
               type: 'string',
-              description: 'Search query (minimum 3 characters)',
+              description: 'Search query (minimum 3 characters). Supports near-me keywords when latitude and longitude are set.',
             },
             limit: {
               type: 'number',
               description: 'Maximum number of suggestions (default: 5, max: 10)',
               default: 5,
+            },
+            latitude: {
+              type: 'number',
+              description: 'User latitude. Must be sent with longitude.',
+            },
+            longitude: {
+              type: 'number',
+              description: 'User longitude. Must be sent with latitude.',
             },
           },
           required: ['query'],
@@ -272,7 +284,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'find_nearby_boundaries',
-        description: 'Find nearby postal boundaries within a specified radius (NOT YET IMPLEMENTED - Coming Soon). The backend endpoint /v1/location/nearby needs to be implemented first.',
+        description: 'Postal-boundary nearby search is not on Location Lookup. For category nearby (hospital near me, schools nearby, parks near me) use geocode or autocomplete with latitude and longitude.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -426,11 +438,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'autocomplete': {
-        const params = args as unknown as { query: string; limit?: number };
+        const params = args as unknown as {
+          query: string;
+          limit?: number;
+          latitude?: number;
+          longitude?: number;
+        };
         if (!params.query || typeof params.query !== 'string' || params.query.length < 3) {
           throw new McpError(ErrorCode.InvalidParams, 'Query must be at least 3 characters long');
         }
-        const result = await client.autocomplete(params.query, params.limit);
+        const result = await client.autocomplete(
+          params.query,
+          params.limit,
+          params.latitude,
+          params.longitude
+        );
         return {
           content: [
             {
@@ -499,14 +521,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'find_nearby_boundaries': {
-        // TODO: This endpoint is not yet implemented in the backend API
-        // The backend endpoint /v1/location/nearby does not exist
-        throw new McpError(
-          ErrorCode.InternalError,
-          'The find_nearby_boundaries feature is not yet implemented in the backend API. The endpoint /v1/location/nearby needs to be implemented first. This feature is coming soon.'
-        );
-        
-        /* Original implementation - Commented out until backend endpoint is available
         const params = args as unknown as NearbyBoundariesParams;
         if (typeof params.latitude !== 'number' || typeof params.longitude !== 'number') {
           throw new McpError(ErrorCode.InvalidParams, 'Latitude and longitude must be numbers');
@@ -525,7 +539,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             },
           ],
         };
-        */
       }
 
       case 'get_usage': {
@@ -570,6 +583,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   } catch (error: any) {
     if (error instanceof McpError) {
       throw error;
+    }
+    if (error instanceof ValidationError) {
+      throw new McpError(ErrorCode.InvalidParams, error.message);
+    }
+    if (error instanceof ApiError) {
+      throw new McpError(ErrorCode.InternalError, error.message);
     }
     throw new McpError(ErrorCode.InternalError, `Tool execution failed: ${error.message}`);
   }

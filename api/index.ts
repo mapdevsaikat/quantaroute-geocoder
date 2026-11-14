@@ -47,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   return sendJson(res, 200, {
     success: true,
     message: 'QuantaRoute Geocoder REST API',
-    version: '1.0.0',
+    version: '1.1.0',
     documentation: 'https://github.com/mapdevsaikat/quantaroute-geocoder',
     authentication: {
       method: 'API Key',
@@ -61,9 +61,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'GET /api/health': 'Health check',
       'GET /api/usage': 'Get API usage statistics',
       'GET /api/location-statistics': 'Get location lookup statistics',
-      'GET /api/autocomplete?q=query&limit=5': 'Get address autocomplete suggestions',
+      'GET /api/autocomplete?q=query&limit=5&lat=&lng=': 'Address autocomplete; lat+lng enable near-me category search',
       'GET /api/validate-digipin?digipin=XXX-XXX-XXXX': 'Validate DigiPin format',
-      'POST /api/geocode': 'Geocode an address',
+      'POST /api/geocode': 'Geocode an address; optional latitude+longitude for local bias and category nearby',
       'POST /api/reverse-geocode': 'Reverse geocode a DigiPin',
       'POST /api/coordinates-to-digipin': 'Convert coordinates to DigiPin',
       'POST /api/validate-digipin': 'Validate DigiPin format',
@@ -71,7 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'POST /api/lookup-location-from-coordinates': 'Get location details from coordinates',
       'POST /api/lookup-location-from-digipin': 'Get location details from DigiPin',
       'POST /api/batch-location-lookup': 'Batch location lookup',
-      'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries (NOT YET IMPLEMENTED - Coming Soon)',
+      'POST /api/find-nearby-boundaries': 'Postal-boundary nearby is not implemented; use geocode/autocomplete with lat/lng for category nearby',
     },
   });
 }

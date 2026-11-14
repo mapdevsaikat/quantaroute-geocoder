@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 // Import client from lib directory (Vercel can access this)
-import { QuantaRouteClient } from '../lib/client.js';
+import { ApiError, QuantaRouteClient, resolveApiKey } from '../lib/client.js';
 
 // CORS headers
 const corsHeaders = {
@@ -21,37 +21,29 @@ function sendJson(res: VercelResponse, status: number, data: any) {
 // Helper to handle errors
 function handleError(res: VercelResponse, error: any, status: number = 500) {
   console.error('API Error:', error);
-  
-  // Determine status code from error message
-  if (error.message?.includes('Authentication failed')) {
-    status = 401;
-  } else if (error.message?.includes('Rate limit exceeded')) {
-    status = 429;
-  } else if (error.message?.includes('required') || error.message?.includes('must be')) {
-    status = 400;
+
+  if (error instanceof ApiError) {
+    sendJson(res, error.httpStatus, {
+      error: error.message,
+      success: false,
+      code: error.details?.upstreamCode ?? error.code,
+      errorClass: error.code,
+      ...(error.details ?? {}),
+    });
+    return;
   }
-  
+
   sendJson(res, status, {
     error: error.message || 'Internal server error',
     success: false,
   });
 }
 
-// Get API key from request headers or environment
 function getApiKey(req: VercelRequest): string {
-  // Priority: Request header > Environment variable
-  const headerKey = req.headers['x-api-key'] as string;
-  const envKey = process.env.QUANTAROUTE_API_KEY;
-  
-  if (headerKey) {
-    return headerKey;
-  }
-  
-  if (envKey) {
-    return envKey;
-  }
-  
-  throw new Error('API key is required. Set QUANTAROUTE_API_KEY environment variable or provide x-api-key header');
+  return resolveApiKey(
+    req.headers['x-api-key'] as string | undefined,
+    process.env.QUANTAROUTE_API_KEY
+  ).apiKey;
 }
 
 // Create client instance with API key
@@ -60,7 +52,25 @@ function createClient(req: VercelRequest): QuantaRouteClient {
   return new QuantaRouteClient(apiKey);
 }
 
-// Handle CORS preflight
+function resolvePath(queryPath: unknown, url?: string): string[] {
+  if (Array.isArray(queryPath)) {
+    return queryPath.filter(Boolean).map(String);
+  }
+  if (typeof queryPath === 'string' && queryPath) {
+    return queryPath.split('/').filter(Boolean);
+  }
+  if (!url) {
+    return [];
+  }
+  try {
+    const urlPath = new URL(url, 'http://localhost').pathname;
+    const cleanPath = urlPath.startsWith('/api') ? urlPath.substring(4) : urlPath;
+    return cleanPath.split('/').filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
 function handleCors(req: VercelRequest, res: VercelResponse): boolean {
   if (req.method === 'OPTIONS') {
     Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -91,27 +101,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   console.log('Request URL:', url);
   console.log('Query params:', JSON.stringify(query));
   
-  // Handle both array and string path formats
-  let path: string[] = [];
-  if (Array.isArray(query.path)) {
-    path = query.path;
-  } else if (typeof query.path === 'string') {
-    path = query.path ? query.path.split('/').filter(Boolean) : [];
-  }
-  
-  // If path is empty or undefined, try to extract from URL
-  if ((!path || path.length === 0) && url) {
-    try {
-      const urlPath = new URL(url, 'http://localhost').pathname;
-      // Remove /api prefix and split
-      const cleanPath = urlPath.startsWith('/api') ? urlPath.substring(4) : urlPath;
-      const parts = cleanPath.split('/').filter(Boolean);
-      path = parts;
-    } catch (e) {
-      // If URL parsing fails, treat as root
-      path = [];
-    }
-  }
+  const path = resolvePath(query.path, url);
   
   const endpoint = path && path.length > 0 ? path[0] : '';
   
@@ -127,7 +117,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return sendJson(res, 200, {
         success: true,
         message: 'QuantaRoute Geocoder REST API',
-        version: '1.0.0',
+        version: '1.1.0',
         documentation: 'https://github.com/mapdevsaikat/quantaroute-geocoder',
         authentication: {
           method: 'API Key',
@@ -141,9 +131,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           'GET /api/health': 'Health check',
           'GET /api/usage': 'Get API usage statistics',
           'GET /api/location-statistics': 'Get location lookup statistics',
-          'GET /api/autocomplete?q=query&limit=5': 'Get address autocomplete suggestions',
+          'GET /api/autocomplete?q=query&limit=5&lat=&lng=': 'Address autocomplete; lat+lng enable near-me category search',
           'GET /api/validate-digipin?digipin=XXX-XXX-XXXX': 'Validate DigiPin format',
-          'POST /api/geocode': 'Geocode an address',
+          'POST /api/geocode': 'Geocode an address; optional latitude+longitude for local bias and category nearby',
           'POST /api/reverse-geocode': 'Reverse geocode a DigiPin',
           'POST /api/coordinates-to-digipin': 'Convert coordinates to DigiPin',
           'POST /api/validate-digipin': 'Validate DigiPin format',
@@ -151,7 +141,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           'POST /api/lookup-location-from-coordinates': 'Get location details from coordinates',
           'POST /api/lookup-location-from-digipin': 'Get location details from DigiPin',
           'POST /api/batch-location-lookup': 'Batch location lookup',
-          'POST /api/find-nearby-boundaries': 'Find nearby postal boundaries (NOT YET IMPLEMENTED - Coming Soon)',
+          'POST /api/find-nearby-boundaries': 'Postal-boundary nearby is not implemented; use geocode/autocomplete with lat/lng for category nearby',
         },
       });
     }
@@ -273,6 +263,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (endpoint === 'autocomplete' && method === 'GET') {
       const queryParam = req.query.q as string;
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 5;
+      const lat = req.query.lat ?? req.query.latitude;
+      const lng = req.query.lng ?? req.query.longitude;
       
       if (!queryParam || queryParam.length < 3) {
         return sendJson(res, 400, {
@@ -286,7 +278,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           error: 'Limit cannot exceed 10',
         });
       }
-      const result = await client.autocomplete(queryParam, limit);
+      const result = await client.autocomplete(queryParam, limit, lat, lng);
       return sendJson(res, 200, { success: true, data: result });
     }
 
@@ -328,37 +320,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Batch location lookup
     if (endpoint === 'batch-location-lookup' && method === 'POST') {
-      if (!body || !Array.isArray(body.locations) || body.locations.length === 0) {
-        return sendJson(res, 400, {
-          success: false,
-          error: 'Locations must be a non-empty array',
-        });
-      }
-      if (body.locations.length > 100) {
-        return sendJson(res, 400, {
-          success: false,
-          error: 'Maximum 100 locations allowed per batch',
-        });
-      }
-      const result = await client.batchLocationLookup(body.locations);
+      const result = await client.batchLocationLookup(body?.locations);
       return sendJson(res, 200, { success: true, data: result });
     }
 
-    // Find nearby boundaries - NOT YET IMPLEMENTED IN BACKEND
-    // TODO: Implement /v1/location/nearby endpoint in backend API
-    // The backend endpoint /v1/location/nearby does not exist yet
-    if (endpoint === 'find-nearby-boundaries' && method === 'POST') {
-      return sendJson(res, 501, {
-        success: false,
-        error: 'Not Implemented',
-        message: 'The find-nearby-boundaries endpoint is not yet implemented in the backend API. This feature is coming soon.',
-        endpoint: 'find-nearby-boundaries',
-        status: 'experimental',
-        note: 'This feature is marked as experimental and will be available in a future release. The backend endpoint /v1/location/nearby needs to be implemented first.'
-      });
-    }
-    
-    /* Original implementation - Commented out until backend endpoint /v1/location/nearby is implemented
     if (endpoint === 'find-nearby-boundaries' && method === 'POST') {
       if (typeof body?.latitude !== 'number' || typeof body?.longitude !== 'number') {
         return sendJson(res, 400, {
@@ -380,7 +345,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
       const radius_km = typeof body.radius_km === 'number' ? body.radius_km : 5.0;
       const limit = typeof body.limit === 'number' ? body.limit : 10;
-      
+
       if (radius_km > 100) {
         return sendJson(res, 400, {
           success: false,
@@ -393,11 +358,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           error: 'Limit cannot exceed 50',
         });
       }
-      
+
       const result = await client.findNearbyBoundaries(body.latitude, body.longitude, radius_km, limit);
       return sendJson(res, 200, { success: true, data: result });
     }
-    */
 
     // Unknown endpoint
     return sendJson(res, 404, {
