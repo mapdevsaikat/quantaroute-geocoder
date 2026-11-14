@@ -5,6 +5,16 @@ All notable changes to the QuantaRoute MCP Server will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-14
+
+### Added
+- Optional `latitude`/`longitude` on geocode and `lat`/`lng` on autocomplete for location bias and category nearby (`hospital near me`).
+- Typed client errors (`AuthenticationError`, `RateLimitError`, `ValidationError`) with short retries.
+
+### Changed
+- Missing API key is HTTP 401.
+- Postal `find-nearby-boundaries` stays unavailable; use geocode or autocomplete with a point instead.
+
 ## [1.0.0] - 2026-02-12
 
 ### Changed
@@ -18,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `mcpName` field to package.json for MCP Registry compliance
 - Created `server.json` for MCP Registry publishing
 - Added GitHub Actions workflow for automated publishing to npm and MCP Registry
-- Added comprehensive MCP_PUBLISHING_GUIDE.md with publishing instructions
 - Added categories and tags for better discoverability in MCP Registry
 
 ### Package Names

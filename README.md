@@ -21,7 +21,7 @@ A Model Context Protocol (MCP) server that provides AI assistants (Claude Deskto
 - **Lookup administrative boundaries** from coordinates (pincode, state, division, locality)
 - **Lookup from DigiPin** codes
 - **Batch location lookup** for multiple locations
-- **Find nearby boundaries** within a radius [COMING SOON...]
+- **Category nearby** (`hospital near me`) via geocode/autocomplete with a lat/lng point; postal `find_nearby_boundaries` still coming later
 - Access to **36,000+ postal boundaries** across India
 
 ### 📊 Utility Tools

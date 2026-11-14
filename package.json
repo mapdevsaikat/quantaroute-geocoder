@@ -1,6 +1,6 @@
 {
   "name": "@quantaroute/mcp-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "mcpName": "io.github.mapdevsaikat/quantaroute-geocoder",
   "description": "MCP server and REST API for QuantaRoute Geocoding API - Geocode addresses, lookup locations, process DigiPin codes",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "tsc && npm run sync-client",
-    "sync-client": "cp src/client.ts lib/client.ts",
+    "sync-client": "cp src/client.ts src/errors.ts src/features.ts src/locations.ts src/credentials.ts lib/",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "prepare": "npm run build",

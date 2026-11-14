@@ -7,12 +7,12 @@
     "url": "https://github.com/mapdevsaikat/quantaroute-geocoder",
     "source": "github"
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@quantaroute/mcp-server",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "transport": {
         "type": "stdio"
       },
